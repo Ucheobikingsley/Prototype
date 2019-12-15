@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistryActivity extends AppCompatActivity {
 
@@ -65,12 +66,15 @@ public class RegistryActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()){
-                        sendUserToLoginActivity();
+                        String currentUserId = mAuth.getCurrentUser().getUid();
+                        rootRef.child("Users").child(currentUserId).setValue("");
+                        sendUserToMainActivity() ;
                         Toast.makeText(RegistryActivity.this, "Accounted created Successfully", Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     }else{
                         String errorMsg = task.getException().toString();
                         Toast.makeText(RegistryActivity.this, "Error :"+ errorMsg, Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
                     }
                 }
             });
@@ -84,6 +88,9 @@ public class RegistryActivity extends AppCompatActivity {
         userPassword = (EditText) findViewById(R.id.register_password);
         alreadyHaveAnAccountLink = (TextView) findViewById(R.id.already_have_an_account_link);
         loadingBar = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
+        rootRef = FirebaseDatabase.getInstance().getReference();
+
     }
     private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(RegistryActivity.this,MainActivity.class);

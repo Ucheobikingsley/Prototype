@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         if(TextUtils.isEmpty(Email) && TextUtils.isEmpty(Password)){
             Toast.makeText(this, "Please fill in the Fields", Toast.LENGTH_SHORT).show();
         }else{
-            loadingBar.setTitle("Loggng In");
+            loadingBar.setTitle("Logging In");
             loadingBar.setMessage("Please wait while we log you in");
             loadingBar.setCanceledOnTouchOutside(true);
             loadingBar.show();
@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                     }else{
                         String errMsg = task.getException().toString();
                         Toast.makeText(LoginActivity.this, "Invalid username or password please try again" , Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
                     }
                 }
             });
@@ -76,7 +77,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
+        finish();
     }
 
     private void initializefields() {
@@ -87,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         needNewAccountLink = (TextView) findViewById(R.id.need_new_account_link);
         forgetPasswordLink = (TextView) findViewById(R.id.forget_password_link);
         loadingBar = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
     }
 
 }
